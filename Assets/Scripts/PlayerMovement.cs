@@ -21,15 +21,18 @@ public class PlayerMovement : MonoBehaviour
 
     public float apexSpeed;
 
-    private float coyoteTimeCounter;
+    public float coyoteTimeCounter;
     private float coyoteTime = 0.15f;
 
     private float jumpBufferTime = 0.15f;
-    private float jumpBufferCounter;
+    public float jumpBufferCounter;
 
     private Animator Anim;
 
-    
+    public bool doubleJumpEnabled;
+    public bool canDoubleJump;
+
+    public GameObject doubleJumpParticle;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -59,12 +62,36 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
+
+        //DOUBLE JUMP________________________________________________
+        //_____________________________________________________________
+        //_______________________________________:>__________________
+
+        if(!isGrounded && canDoubleJump && Input.GetKeyDown(Up) && doubleJumpEnabled)
         {
             rb.linearVelocityY = jumpSpeed;
             Anim.SetTrigger("takeoff");
             jumpBufferCounter = 0f;
+            canDoubleJump = false;
+            Instantiate(doubleJumpParticle,groundCheck.position,Quaternion.identity);
         }
+
+
+        //yeah idk, im just scared i will lose this code so im encasing it with comments!
+        //________________________________________________________________________________
+
+
+
+
+        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
+        {
+            rb.linearVelocityY = jumpSpeed;
+            Anim.SetTrigger("takeoff");
+            canDoubleJump = true;
+            jumpBufferCounter = 0f;
+
+        }
+        
         if (Mathf.Abs(rb.linearVelocityY) <= 0.5f && !isGrounded)
         {
             rb.gravityScale = apexGravity;
@@ -78,7 +105,6 @@ public class PlayerMovement : MonoBehaviour
             rb.gravityScale = upGravity;
         }
 
-        isGrounded = Physics2D.OverlapBox(groundCheck.position, Vector2.one * groundCheckSize, 0f, groundLayer);
 
         if(isGrounded)
         {
@@ -122,6 +148,7 @@ public class PlayerMovement : MonoBehaviour
             if (rb.linearVelocityX < 0f)
             {
                 rb.linearVelocityX = 0f;
+
             }
             else rb.AddForceX(movespeed);
             Anim.SetBool("isRunning", true);
@@ -133,6 +160,7 @@ public class PlayerMovement : MonoBehaviour
             Anim.SetBool("isRunning", false);
         }
 
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckSize, groundLayer);
 
         Anim.SetBool("isJumping", !isGrounded);
 
