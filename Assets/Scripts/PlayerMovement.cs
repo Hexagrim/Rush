@@ -26,9 +26,14 @@ public class PlayerMovement : MonoBehaviour
 
     private float jumpBufferTime = 0.15f;
     private float jumpBufferCounter;
+
+    private Animator Anim;
+
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        Anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -45,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(Up))
         {
+
             jumpBufferCounter = jumpBufferTime;
         }
         else
@@ -53,12 +59,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-
-
-        if (jumpBufferCounter >0f && coyoteTimeCounter > 0f)
+        if (jumpBufferCounter > 0f && coyoteTimeCounter > 0f)
         {
             rb.linearVelocityY = jumpSpeed;
-
+            Anim.SetTrigger("takeoff");
             jumpBufferCounter = 0f;
         }
         if (Mathf.Abs(rb.linearVelocityY) <= 0.5f && !isGrounded)
@@ -80,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearDamping = 2f;
         }
-        else
+        else//
         {
             rb.linearDamping = 0f;
         }
@@ -110,6 +114,8 @@ public class PlayerMovement : MonoBehaviour
                 rb.linearVelocityX = 0f;
             }
             else rb.AddForceX(-movespeed);
+            Anim.SetBool("isRunning", true);
+            transform.localScale = new Vector2(-1, 1);
         }
         else if (Input.GetKey(Right))
         {
@@ -118,11 +124,18 @@ public class PlayerMovement : MonoBehaviour
                 rb.linearVelocityX = 0f;
             }
             else rb.AddForceX(movespeed);
+            Anim.SetBool("isRunning", true);
+            transform.localScale = new Vector2(1, 1);
         }
         else
         {
             rb.linearVelocityX *= 0.5f;
+            Anim.SetBool("isRunning", false);
         }
+
+
+        Anim.SetBool("isJumping", !isGrounded);
+
 
     }
 }
