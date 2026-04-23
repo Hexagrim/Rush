@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxSpeed;
     public float jumpSpeed;
 
-    public KeyCode Left, Right, Up;
+    public KeyCode Left, Right, Up, dashButton;
 
     public float apexGravity, upGravity, downGravity;
 
@@ -44,6 +45,17 @@ public class PlayerMovement : MonoBehaviour
     bool wallJumping;
 
     public Vector2 wallJumpForce;
+
+
+    public float dashSpeed;
+    public float dashTime;
+    bool isDashing;
+    bool canDash = true;
+    bool dashReset;
+    public float dashCooldown;
+
+    public GameObject DashParticle;
+    public ParticleSystem dashtrail;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -54,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (isDashing) return;
         HandleCoyoteTime();
         HandleJumpBuffer();
         if (!isSliding)
@@ -71,6 +84,7 @@ public class PlayerMovement : MonoBehaviour
         HandleWallCheck();
         WallSlide();
         WallJump();
+        HandleDash();
     }
 
 
@@ -78,6 +92,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isDashing) return;
         HandleGroundCheck();
 
         if(wallJumping)
@@ -289,6 +304,40 @@ public class PlayerMovement : MonoBehaviour
         wallJumping = false;
         rb.linearVelocityY *= 0.55f;
         rb.gravityScale = downGravity;
+    }
+
+    void HandleDash()
+    {
+        if (Input.GetKeyDown(dashButton) && dashReset && canDash)
+        {
+            StartCoroutine(Dash());
+        }
+
+        if (isGrounded)
+        {
+            dashReset = true;
+
+        }
+
+    }
+    IEnumerator Dash()
+    {
+        isDashing = true;
+        dashReset = false;
+        canDash = false;
+        float normGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+        rb.linearVelocityX = dashSpeed * Mathf.Sign(transform.localScale.x);
+        rb.linearVelocityY = 0f;
+        dashtrail.Play(true);
+        Instantiate(DashParticle, transform.position , Quaternion.identity );
+        yield return new WaitForSeconds(dashTime);
+        dashtrail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        isDashing = false;
+        rb.gravityScale = normGravity;
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+
     }
 
 
