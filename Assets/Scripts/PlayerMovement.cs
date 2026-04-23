@@ -33,6 +33,22 @@ public class PlayerMovement : MonoBehaviour
     public bool canDoubleJump;
 
     public GameObject doubleJumpParticle;
+    bool isWalled;
+    public Transform wallCheck;
+    public LayerMask wallLayer;
+    public float wallCheckSize;
+    public float wallSlidingSpeed;
+    bool isWallSliding;
+
+
+
+
+    public bool isWallJumping;
+    public float wallJumpingDirection;
+    float wallJumpingTime = 0.2f;
+    public float wallJumpingCounter;
+    float wallJumpingDuration = 0.4f;
+    public Vector2 wallJumpPower;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -67,7 +83,8 @@ public class PlayerMovement : MonoBehaviour
         //_____________________________________________________________
         //_______________________________________:>__________________
 
-        if(!isGrounded && canDoubleJump && Input.GetKeyDown(Up) && doubleJumpEnabled)
+
+        if(!isGrounded && canDoubleJump && Input.GetKeyDown(Up) && doubleJumpEnabled && !isWallSliding && !isWallJumping)
         {
             rb.linearVelocityY = jumpSpeed;
             Anim.SetTrigger("takeoff");
@@ -79,6 +96,57 @@ public class PlayerMovement : MonoBehaviour
 
         //yeah idk, im just scared i will lose this code so im encasing it with comments!
         //________________________________________________________________________________
+
+
+
+
+        //NOW WALL JUMP/SLIDEEE
+
+        if(isWalled && !isGrounded && (Input.GetKey(Left) || Input.GetKey(Right)))
+        {
+            isWallSliding = true;
+            rb.linearVelocityY = Mathf.Clamp(rb.linearVelocityY, -wallSlidingSpeed, float.MaxValue);
+        }
+        else
+        {
+            isWallSliding = false;
+        }
+        
+        if(Input.GetKeyDown(Up) && wallJumpingCounter > 0f)
+        {
+            isWallJumping = true;
+            rb.linearVelocityX = wallJumpingDirection * wallJumpPower.x;
+            rb.linearVelocityY = wallJumpPower.y;
+            wallJumpingCounter = 0f;
+            if(transform.localScale.x != wallJumpingDirection)
+            {
+                transform.localScale = new Vector2(wallJumpingDirection, 1);
+            }
+
+            Invoke(nameof(StopWallJumping), wallJumpingDuration);
+        }
+
+        Anim.SetBool("isWallSliding", isWallSliding);
+
+
+        if (isWallSliding)
+        {
+            isWallJumping = false;
+            wallJumpingDirection = -transform.localScale.x;
+            wallJumpingCounter = wallJumpingTime;
+            CancelInvoke(nameof(StopWallJumping));
+        }
+        else
+        {
+            wallJumpingCounter -= Time.deltaTime;
+        }
+
+
+
+
+        //WALLL SHIT IS ABOVESSS__________________________________
+        //___________________________________________________________
+        //____________________________________________________
 
 
 
@@ -120,19 +188,27 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocityY *= 0.75f;
             coyoteTimeCounter = 0f;
         }
-
-        if(Mathf.Abs(rb.linearVelocityY) <= 0.5f && !isGrounded)
+        if (!isWallJumping)
         {
-            rb.linearVelocityX = Mathf.Clamp(rb.linearVelocityX, -apexSpeed, +apexSpeed);
-        }
-        else
-        {
-            rb.linearVelocityX = Mathf.Clamp(rb.linearVelocityX, -maxSpeed, maxSpeed);
+            if (Mathf.Abs(rb.linearVelocityY) <= 0.5f && !isGrounded)
+            {
+                rb.linearVelocityX = Mathf.Clamp(rb.linearVelocityX, -apexSpeed, +apexSpeed);
+            }
+            else
+            {
+                rb.linearVelocityX = Mathf.Clamp(rb.linearVelocityX, -maxSpeed, maxSpeed);
 
+            }
         }
+        isWalled = Physics2D.OverlapCircle(wallCheck.position, wallCheckSize, wallLayer);
     }
     private void FixedUpdate()
     {
+        if (isWallJumping)
+        {
+            return;
+        }
+        
         if (Input.GetKey(Left))
         {
             if (rb.linearVelocityX > 0f)
@@ -161,9 +237,13 @@ public class PlayerMovement : MonoBehaviour
         }
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckSize, groundLayer);
-
         Anim.SetBool("isJumping", !isGrounded);
 
 
+    }
+
+    void StopWallJumping()
+    {
+        isWallJumping = false;
     }
 }
