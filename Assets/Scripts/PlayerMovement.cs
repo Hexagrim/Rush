@@ -144,10 +144,17 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocityY = jumpSpeed;
             Anim.SetTrigger("takeoff");
+            if (FindFirstObjectByType<CamShake>() != null)
+            {
+                FindFirstObjectByType<CamShake>().ShakeCam(4, 2, 0.07f);
+            }
             jumpBufferCounter = 0f;
+
             canDoubleJump = false;
+
             Instantiate(doubleJumpParticle, groundCheck.position, Quaternion.identity);
         }
+
     }
 
 
@@ -161,14 +168,14 @@ public class PlayerMovement : MonoBehaviour
             canDoubleJump = true;
             jumpBufferCounter = 0f;
         }
-
+        
     }
 
 
 
     void HandleGravity()
     {
-        if (Mathf.Abs(rb.linearVelocityY) <= 0.5f && !isGrounded)
+        if (Mathf.Abs(rb.linearVelocityY) <= 1f && !isGrounded)
         {
             rb.gravityScale = apexGravity;
         }
@@ -214,7 +221,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleApexSpeedClamp()
     {
-        if (Mathf.Abs(rb.linearVelocityY) <= 0.5f && !isGrounded)
+        if (Mathf.Abs(rb.linearVelocityY) <= 0.7f && !isGrounded)
         {
             rb.linearVelocityX = Mathf.Clamp(rb.linearVelocityX, -apexSpeed, +apexSpeed);
         }
@@ -293,6 +300,7 @@ public class PlayerMovement : MonoBehaviour
         if (!isGrounded && isSliding && Input.GetKeyDown(Up))
         {
             wallJumping = true;
+
             Invoke(nameof(StopWallJump), 0.15f);
         }
         
@@ -302,8 +310,10 @@ public class PlayerMovement : MonoBehaviour
     void StopWallJump()
     {
         wallJumping = false;
-        rb.linearVelocityY *= 0.55f;
+        rb.linearVelocityY *= 0.4f;
         rb.gravityScale = downGravity;
+        canDoubleJump = true;
+
     }
 
     void HandleDash()
@@ -313,14 +323,15 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(Dash());
         }
 
-        if (isGrounded)
+        if (isGrounded) //|| isSliding)
         {
             dashReset = true;
 
         }
+        Anim.SetBool("isDashing", isDashing);
 
     }
-    IEnumerator Dash()
+    IEnumerator Dash()//yes this is dash
     {
         isDashing = true;
         dashReset = false;
@@ -328,8 +339,13 @@ public class PlayerMovement : MonoBehaviour
         float normGravity = rb.gravityScale;
         rb.gravityScale = 0f;
         rb.linearVelocityX = dashSpeed * Mathf.Sign(transform.localScale.x);
-        rb.linearVelocityY = 0f;
+        rb.linearVelocityY  = 0f;
         dashtrail.Play(true);
+        if(FindFirstObjectByType<CamShake>() != null)
+        {
+            FindFirstObjectByType<CamShake>().ShakeCam(7, 4, 0.2f);
+        }
+        
         Instantiate(DashParticle, transform.position , Quaternion.identity );
         yield return new WaitForSeconds(dashTime);
         dashtrail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
