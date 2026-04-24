@@ -298,7 +298,7 @@ public class PlayerMovement : MonoBehaviour
 
     void WallSlide()
     {
-        if(isWalled && !isGrounded && (Input.GetKey (Left) || Input.GetKey(Right)))
+        if (isWalled && !isGrounded && (Input.GetKey(Left) || Input.GetKey(Right)) && rb.linearVelocityY <= 5f)
         {
             isSliding = true;
         }
@@ -391,6 +391,10 @@ public class PlayerMovement : MonoBehaviour
     {
         isSlamming = true;
         canSlam = false;
+
+        float slamStartTime = Time.time;
+        float minLockTime = 0.1f;
+        bool cancelUsed = false;
         rb.linearVelocity = new Vector2(0, -slamSpeed);
         Anim.SetTrigger("groundSlam");
         FindFirstObjectByType<CamShake>().ShakeCam(2, 2, 0.5f);
@@ -398,23 +402,42 @@ public class PlayerMovement : MonoBehaviour
         slamtrail.Play();
         while (!isGrounded && isSlamming)
         {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            if (!cancelUsed && Time.time > slamStartTime + minLockTime)
+            {
+                if (Input.GetKey(KeyCode.W))
+                {
+                    cancelUsed = true;
+                    Anim.SetTrigger("stopSmash");
+                    rb.linearVelocity = new Vector2(
+                        rb.linearVelocity.x * 0.5f,
+                        rb.linearVelocity.y * 0.25f
+                    );
+                    rb.linearVelocity += Vector2.up * 1.5f;
+                    break;
+                }
+            }
             yield return null;
         }
-        FindFirstObjectByType<CamShake>().ShakeCam(10, 5, 0.15f);
+        if (isGrounded)
+        {
+            FindFirstObjectByType<CamShake>().ShakeCam(10, 5, 0.15f);
+            Instantiate(slamParticle, transform.position, Quaternion.identity);
+        }
         slamtrail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         isSlamming = false;
-        Instantiate(slamParticle,transform.position , Quaternion.identity );
         yield return new WaitForSeconds(slamCooldown);
         canSlam = true;
     }
+
 
     void HandleGlide()
     {
         if (Input.GetKey(glide) && canGlide && rb.linearVelocityY < 0f && !isGrounded)
         {
             isGliding = true;
-            rb.gravityScale = 2f;
-            rb.linearVelocityY = Mathf.Clamp(rb.linearVelocityY, -10, float.MaxValue);
+            rb.gravityScale = 1f;
+            //rb.linearVelocityY = Mathf.Clamp(rb.linearVelocityY, -10, float.MaxValue);
             if (!glideTrail.isPlaying)
             {
                 glideTrail.Play();
