@@ -67,6 +67,8 @@ public class PlayerMovement : MonoBehaviour
 
     bool isGliding = false;
     public bool canGlide = true;
+
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -330,7 +332,7 @@ public class PlayerMovement : MonoBehaviour
     void StopWallJump()
     {
         wallJumping = false;
-        rb.linearVelocityY *= 0.4f;
+        rb.linearVelocityY *= 0.3f;
         rb.gravityScale = downGravity;
         //canDoubleJump = true;
         //dashReset = true;
@@ -359,7 +361,7 @@ public class PlayerMovement : MonoBehaviour
         canDash = false;
         float normGravity = rb.gravityScale;
         rb.gravityScale = 0f;
-        rb.linearVelocityX = dashSpeed * Mathf.Sign(transform.localScale.x);
+        rb.linearVelocityX = dashSpeed * Mathf.Sign(transform.localScale.x) * (isSliding ? -1 : 1); // TERNARY OPERATOR AHHH
         rb.linearVelocityY = 0f;
         dashtrail.Play(true);
         if (FindFirstObjectByType<CamShake>() != null)
