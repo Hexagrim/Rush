@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -10,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxSpeed;
     public float jumpSpeed;
 
-    public KeyCode Left, Right, Up, dashButton;
+    public KeyCode Left, Right, Up, dashButton , Down;
 
     public float apexGravity, upGravity, downGravity;
 
@@ -55,7 +56,13 @@ public class PlayerMovement : MonoBehaviour
     public float dashCooldown;
 
     public GameObject DashParticle;
-    public ParticleSystem dashtrail;
+    public ParticleSystem dashtrail, slamtrail;
+
+    bool isSlamming;
+    bool canSlam = true;
+    public GameObject slamParticle;
+    public float slamSpeed;
+    public float slamCooldown;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -66,7 +73,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (isDashing) return;
+
+
+        if (isDashing || isSlamming) return;
         HandleCoyoteTime();
         HandleJumpBuffer();
         if (!isSliding)
@@ -85,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
         WallSlide();
         WallJump();
         HandleDash();
+        HandleSlam();
     }
 
 
@@ -92,8 +102,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDashing) return;
         HandleGroundCheck();
+        if (isDashing || isSlamming) return;
+
 
         if(wallJumping)
         {
@@ -356,5 +367,33 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    void HandleSlam()
+    {
 
+        if(Input.GetKeyDown(Down) && canSlam && !isGrounded)
+        {
+            
+            StartCoroutine(DownSmash());
+        }
+    }
+
+    IEnumerator DownSmash()
+    {
+        isSlamming = true;
+        canSlam = false;
+        rb.linearVelocity = new Vector2(0, -slamSpeed);
+        Anim.SetTrigger("groundSlam");
+        FindFirstObjectByType<CamShake>().ShakeCam(2, 2, 0.3f);
+        slamtrail.Play();
+        while (!isGrounded && isSlamming)
+        {
+            yield return null;
+        }
+        FindFirstObjectByType<CamShake>().ShakeCam(10, 4, 0.1f);
+        slamtrail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        isSlamming = false;
+        Instantiate(slamParticle,transform.position , Quaternion.identity );
+        yield return new WaitForSeconds(slamCooldown);
+        canSlam = true;
+    }
 }
