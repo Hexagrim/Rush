@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxSpeed;
     public float jumpSpeed;
 
-    public KeyCode Left, Right, Up, dashButton , Down , glide;
+    public KeyCode Left, Right, Up, dashButton, Down, glide;
 
     public float apexGravity, upGravity, downGravity;
 
@@ -56,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
     public float dashCooldown;
 
     public GameObject DashParticle;
-    public ParticleSystem dashtrail, slamtrail , glideTrail;
+    public ParticleSystem dashtrail, slamtrail, glideTrail;
 
     bool isSlamming;
     bool canSlam = true;
@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-
+        HandleGroundCheck();
 
         if (isDashing || isSlamming) return;
         HandleCoyoteTime();
@@ -110,11 +110,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        HandleGroundCheck();
+
         if (isDashing || isSlamming) return;
 
 
-        if(wallJumping)
+        if (wallJumping)
         {
             rb.AddForce(new Vector2(wallJumpForce.x * transform.localScale.x, wallJumpForce.y));
             //rb.linearVelocity = new Vector2(wallJumpForce.x * transform.localScale.x, wallJumpForce.y);
@@ -187,7 +187,7 @@ public class PlayerMovement : MonoBehaviour
             canDoubleJump = true;
             jumpBufferCounter = 0f;
         }
-        
+
     }
 
 
@@ -287,7 +287,7 @@ public class PlayerMovement : MonoBehaviour
     void HandleGroundCheck()
     {
         //isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckSize, groundLayer);
-        isGrounded = Physics2D.OverlapBox(groundCheck.position,Vector2.one * groundCheckSize,0f, groundLayer);
+        isGrounded = Physics2D.OverlapBox(groundCheck.position, Vector2.one * groundCheckSize, 0f, groundLayer);
         Anim.SetBool("isJumping", !isGrounded);
     }
     void HandleWallCheck()
@@ -307,9 +307,9 @@ public class PlayerMovement : MonoBehaviour
             isSliding = false;
         }
 
-        if(isSliding)
+        if (isSliding)
         {
-            rb.linearVelocityY = Mathf.Clamp(rb.linearVelocityY,-wallSlidingSpeed,wallSlidingSpeed);
+            rb.linearVelocityY = Mathf.Clamp(rb.linearVelocityY, -wallSlidingSpeed, wallSlidingSpeed);
         }
         Anim.SetBool("isWallSliding", isSliding);
     }
@@ -323,7 +323,7 @@ public class PlayerMovement : MonoBehaviour
 
             Invoke(nameof(StopWallJump), 0.15f);
         }
-        
+
     }
     //yes yes very much, good code i write, yeah!. if you read this, get a life !
 
@@ -360,14 +360,14 @@ public class PlayerMovement : MonoBehaviour
         float normGravity = rb.gravityScale;
         rb.gravityScale = 0f;
         rb.linearVelocityX = dashSpeed * Mathf.Sign(transform.localScale.x);
-        rb.linearVelocityY  = 0f;
+        rb.linearVelocityY = 0f;
         dashtrail.Play(true);
-        if(FindFirstObjectByType<CamShake>() != null)
+        if (FindFirstObjectByType<CamShake>() != null)
         {
             FindFirstObjectByType<CamShake>().ShakeCam(7, 4, 0.2f);
         }
-        
-        Instantiate(DashParticle, transform.position , Quaternion.identity );
+
+        Instantiate(DashParticle, transform.position, Quaternion.identity);
         yield return new WaitForSeconds(dashTime);
         dashtrail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         isDashing = false;
@@ -380,9 +380,9 @@ public class PlayerMovement : MonoBehaviour
     void HandleSlam()
     {
 
-        if(Input.GetKeyDown(Down) && canSlam && !isGrounded)
+        if (Input.GetKeyDown(Down) && canSlam && !isGrounded)
         {
-            
+
             StartCoroutine(DownSmash());
         }
     }
@@ -433,7 +433,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleGlide()
     {
-        if (Input.GetKey(glide) && canGlide && rb.linearVelocityY < 0f && !isGrounded)
+        if (Input.GetKey(glide) && canGlide && rb.linearVelocityY <= 0f && !isGrounded)
         {
             isGliding = true;
             rb.gravityScale = 1f;
@@ -445,7 +445,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if(glideTrail.isPlaying)
+            if (glideTrail.isPlaying)
             {
                 glideTrail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
@@ -453,5 +453,19 @@ public class PlayerMovement : MonoBehaviour
         }
 
         Anim.SetBool("isGliding", isGliding);
+    }
+
+    //DEBUG SHIT AHH
+
+    void OnDrawGizmosSelected()
+    {
+        if (groundCheck == null) return;
+
+        Gizmos.color = Color.green;
+
+        Vector3 pos = groundCheck.position;
+        Vector3 size = new Vector3(groundCheckSize, groundCheckSize, 0f);
+
+        Gizmos.DrawWireCube(pos, size);
     }
 }
