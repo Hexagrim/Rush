@@ -49,8 +49,10 @@ public class PlayerDeath : MonoBehaviour
         Anim.SetBool("isRunning", false);
         Anim.SetBool("isJumping", false);
         Anim.SetBool("isDashing", false);
+        Anim.SetBool("isWallSliding", false);
         yield return new WaitForSeconds(0.2f);
         GetComponent<Rigidbody2D>().constraints = rbc;
+        mov.cancleAbility = false;
         mov.enabled = true;
 
 

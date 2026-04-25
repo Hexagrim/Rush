@@ -69,6 +69,8 @@ public class PlayerMovement : MonoBehaviour
     public bool canGlide = true;
 
     public bool cancleAbility;
+
+    bool wallJumpMoveLock = false;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -121,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(new Vector2(wallJumpForce.x * transform.localScale.x, wallJumpForce.y));
             //rb.linearVelocity = new Vector2(wallJumpForce.x * transform.localScale.x, wallJumpForce.y);
         }
-        else
+        else if(!wallJumpMoveLock)
         {
             HandleMovement();
         }
@@ -319,11 +321,15 @@ public class PlayerMovement : MonoBehaviour
 
     void WallJump()
     {
-        if (!isGrounded && isSliding && Input.GetKeyDown(Up))
+        if (!isGrounded && isSliding && Input.GetKeyDown(Up)&& coyoteTimeCounter <= 0f)
         {
             wallJumping = true;
-
+            wallJumpMoveLock = true;
             Invoke(nameof(StopWallJump), 0.15f);
+        }
+        if (isGrounded && Mathf.Abs(rb.linearVelocityY) <=0.1f)
+        {
+            canDoubleJump = false;
         }
 
     }
@@ -332,13 +338,18 @@ public class PlayerMovement : MonoBehaviour
     void StopWallJump()
     {
         wallJumping = false;
-        rb.linearVelocityY *= 0.3f;
+        rb.linearVelocityY *= 0.6f;
+        Invoke(nameof(UnlockMove) , 0.05f);
         rb.gravityScale = downGravity;
         //canDoubleJump = true;
         //dashReset = true;
 
     }
 
+    void UnlockMove()
+    {
+        wallJumpMoveLock = false;
+    }
     void HandleDash()
     {
         if (Input.GetKeyDown(dashButton) && dashReset && canDash) // yeah eyah biqach i dont fucking lke to
