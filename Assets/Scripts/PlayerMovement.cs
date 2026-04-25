@@ -106,7 +106,7 @@ public class PlayerMovement : MonoBehaviour
         WallJump();
         HandleDash();
         HandleSlam();
-        HandleGlide();
+        //HandleGlide();
     }
 
 
@@ -330,6 +330,17 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && Mathf.Abs(rb.linearVelocityY) <=0.1f)
         {
             canDoubleJump = false;
+        }
+
+        if (wallJumping && !glideTrail.isPlaying)
+        {
+            glideTrail.Play();
+        }
+        else if(glideTrail.isPlaying && !wallJumping)
+        {
+
+            glideTrail.Stop(true,ParticleSystemStopBehavior.StopEmitting);
+
         }
 
     }
