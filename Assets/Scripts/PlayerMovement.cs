@@ -318,14 +318,14 @@ public class PlayerMovement : MonoBehaviour
         Anim.SetBool("isWallSliding", isSliding);
     }
 
-
+    // yes yes wall jump, i spent like 10 hrs doing ts!
     void WallJump()
     {
         if (!isGrounded && isSliding && Input.GetKeyDown(Up)&& coyoteTimeCounter <= 0f)
         {
             wallJumping = true;
             wallJumpMoveLock = true;
-            Invoke(nameof(StopWallJump), 0.15f);
+            Invoke(nameof(StopWallJump), 0.1f);
         }
         if (isGrounded && Mathf.Abs(rb.linearVelocityY) <=0.1f)
         {
@@ -339,7 +339,7 @@ public class PlayerMovement : MonoBehaviour
     {
         wallJumping = false;
         rb.linearVelocityY *= 0.6f;
-        Invoke(nameof(UnlockMove) , 0.05f);
+        Invoke(nameof(UnlockMove) , 0.08f);
         rb.gravityScale = downGravity;
         //canDoubleJump = true;
         //dashReset = true;

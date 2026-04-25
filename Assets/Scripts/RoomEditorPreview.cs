@@ -3,33 +3,30 @@ using UnityEngine;
 [ExecuteAlways]
 public class RoomEditorPreview : MonoBehaviour
 {
-    private GameObject Vcam;
+    private GameObject vcam;
+    private Collider2D roomCollider;
+    private Transform player;
 
-    private void OnEnable()
+    void OnEnable()
     {
         if (transform.childCount > 0)
-            Vcam = transform.GetChild(0).gameObject;
+            vcam = transform.GetChild(0).gameObject;
+
+        roomCollider = GetComponent<Collider2D>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void Update()
     {
-        if (Application.isPlaying) return; // ignore in play mode
-
-        if (collision.CompareTag("Player"))
+        if (Application.isPlaying) return;
+        if (player == null)
         {
-            if (Vcam != null)
-                Vcam.SetActive(true);
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null)
+                player = p.transform;
         }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (Application.isPlaying) return; // ignore in play mode
-
-        if (collision.CompareTag("Player"))
-        {
-            if (Vcam != null)
-                Vcam.SetActive(false);
-        }
+        if (player == null || roomCollider == null || vcam == null)
+            return;
+        bool inside = roomCollider.bounds.Contains(player.position);
+        vcam.SetActive(inside);
     }
 }
