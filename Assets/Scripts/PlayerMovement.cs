@@ -68,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
     bool isGliding = false;
     public bool canGlide = true;
 
-    
+    public bool cancleAbility;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -407,9 +407,10 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             if (!cancelUsed && Time.time > slamStartTime + minLockTime)
             {
-                if (Input.GetKey(KeyCode.W))
+                if (Input.GetKey(KeyCode.W) || cancleAbility)
                 {
                     cancelUsed = true;
+                    cancleAbility = false;
                     Anim.SetTrigger("stopSmash");
                     rb.linearVelocity = new Vector2(
                         rb.linearVelocity.x * 0.5f,

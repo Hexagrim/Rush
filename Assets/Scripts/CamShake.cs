@@ -7,11 +7,13 @@ public class CamShake : MonoBehaviour
     CinemachineBasicMultiChannelPerlin noise;
     float shakeTimer;
     float shakeTimerTotal;
+
     void Awake()
     {
         cam = GetComponent<CinemachineCamera>();
         noise = cam.GetCinemachineComponent(CinemachineCore.Stage.Noise) as CinemachineBasicMultiChannelPerlin;
     }
+
     void Update()
     {
         if (shakeTimer > 0)
@@ -25,6 +27,7 @@ public class CamShake : MonoBehaviour
             }
         }
     }
+
     public void ShakeCam(float amplitude, float frequency, float time)
     {
         noise.AmplitudeGain = amplitude;
