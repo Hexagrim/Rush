@@ -12,7 +12,7 @@ public class AbilityManager : MonoBehaviour
     public TMP_Text abilityControlText;
     void Start()
     {
-        StartCoroutine(GetDash());
+
     }
 
     // Update is called once per frame
@@ -23,18 +23,19 @@ public class AbilityManager : MonoBehaviour
 
     public IEnumerator GetDash()
     {
-        yield return new WaitForSecondsRealtime(5f);
+        StartCoroutine(LerpTimeScale(0f, 0.5f));
+        yield return new WaitForSecondsRealtime(0.7f);
         abilityGainText.text = "Dash";
         KeyCode button = GetComponent<PlayerMovement>().dashButton;
         abilityControlText.text = button.ToString();
         abilityGainScreen.SetBool("show", true);
-        StartCoroutine(LerpTimeScale(0f, 0.25f));
-        yield return new WaitForSecondsRealtime(2f);
+        //yield return new WaitForSecondsRealtime(2f);
         while (!Input.anyKey)
         {
             yield return null;
         }
         abilityGainScreen.SetBool("show", false);
+        dash = true;
         StartCoroutine(LerpTimeScale(1f, 0.1f));
 
     }

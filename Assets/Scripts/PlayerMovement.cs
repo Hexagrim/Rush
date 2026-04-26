@@ -71,16 +71,20 @@ public class PlayerMovement : MonoBehaviour
     public bool cancleAbility;
 
     bool wallJumpMoveLock = false;
+
+    AbilityManager am;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         Anim = GetComponent<Animator>();
+        am = GetComponent<AbilityManager>();
     }
 
 
 
     void Update()
     {
+
         HandleGroundCheck();
 
         if (isDashing || isSlamming) return;
@@ -104,7 +108,10 @@ public class PlayerMovement : MonoBehaviour
         HandleWallCheck();
         WallSlide();
         WallJump();
-        HandleDash();
+        if (am.dash)
+        {
+            HandleDash();
+        }
         HandleSlam();
         //HandleGlide();
     }
@@ -363,7 +370,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void HandleDash()
     {
-        if (Input.GetKeyDown(dashButton) && dashReset && canDash) // yeah eyah biqach i dont fucking lke to
+        if (Input.GetKeyDown(dashButton) && dashReset && canDash)
         {
             StartCoroutine(Dash());
         }
@@ -453,6 +460,7 @@ public class PlayerMovement : MonoBehaviour
         isSlamming = false;
         yield return new WaitForSeconds(slamCooldown);
         canSlam = true;
+        rb.linearVelocityY = jumpSpeed * 1.75f;
     }
 
 

@@ -12,37 +12,40 @@ public class RoomScript : MonoBehaviour
         Vcam = transform.GetChild(0).gameObject;
     }
 
-    // Update is called once per frame
+
+    // Update is called once per framee y u red this?
     void Update()
     {
         
     }
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
 
-            
+            if (Vcam.activeSelf) return;
             Vcam.SetActive(true);
-
             Vcam.GetComponent<CinemachineBasicMultiChannelPerlin>().AmplitudeGain = 0f;
-
             Vcam.GetComponent<CinemachineBasicMultiChannelPerlin>().FrequencyGain = 0f;
-
-            StartCoroutine(TimeStop());
-
         }
     }
+
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+
             Vcam.SetActive(false);
             Vcam.GetComponent<CinemachineBasicMultiChannelPerlin>().AmplitudeGain = 0f;
-
             Vcam.GetComponent<CinemachineBasicMultiChannelPerlin>().FrequencyGain = 0f;
+            StartCoroutine(TimeStop());
         }
     }
+
+
     //time stop so we cant move when transitioning yeas!
     IEnumerator TimeStop()
     {
