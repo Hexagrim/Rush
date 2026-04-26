@@ -23,14 +23,20 @@ public class AbilityCollectable : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+
+            AbilityManager am = collision.gameObject.GetComponent<AbilityManager>();
             if (dash)
             {
-                AbilityManager am = collision.gameObject.GetComponent<AbilityManager>();
                 am.StartCoroutine(am.GetDash());
-                FindFirstObjectByType<CamShake>().ShakeCam(7, 2, 0.1f);
-                Instantiate(collectParticle, transform.position, Quaternion.identity);
-                Destroy(this.gameObject);
             }
+            else if (doubleJump)
+            {
+                am.StartCoroutine(am.GetDoubleJump());
+            }
+
+            FindFirstObjectByType<CamShake>().ShakeCam(7, 2, 0.1f);
+            Instantiate(collectParticle, transform.position, Quaternion.identity);
+            Destroy(this.gameObject);
         }
     }
 }

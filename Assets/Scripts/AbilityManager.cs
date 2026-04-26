@@ -6,7 +6,7 @@ using UnityEngine;
 public class AbilityManager : MonoBehaviour
 {
     public bool dash, slam, wallSlide, doubleJump;
-
+    public GameObject dashIcon, djIcon, wsIcon, slamIcon;
     public TMP_Text abilityGainText;
     public Animator abilityGainScreen;
     public TMP_Text abilityControlText;
@@ -27,15 +27,38 @@ public class AbilityManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.7f);
         abilityGainText.text = "Dash";
         KeyCode button = GetComponent<PlayerMovement>().dashButton;
+        dashIcon.SetActive(true);
         abilityControlText.text = button.ToString();
         abilityGainScreen.SetBool("show", true);
-        //yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(0.5f);
         while (!Input.anyKey)
         {
             yield return null;
         }
         abilityGainScreen.SetBool("show", false);
         dash = true;
+        dashIcon.SetActive(false);
+        StartCoroutine(LerpTimeScale(1f, 0.1f));
+
+    }
+
+    public IEnumerator GetDoubleJump()
+    {
+        StartCoroutine(LerpTimeScale(0f, 0.5f));
+        djIcon.SetActive(true);
+        yield return new WaitForSecondsRealtime(0.7f);
+        abilityGainText.text = "Double Jump";
+        KeyCode button = GetComponent<PlayerMovement>().Up;
+        abilityControlText.text = button.ToString();
+        abilityGainScreen.SetBool("show", true);
+        yield return new WaitForSecondsRealtime(0.5f);
+        while (!Input.anyKey)
+        {
+            yield return null;
+        }
+        djIcon.SetActive(false);
+        abilityGainScreen.SetBool("show", false);
+        doubleJump = true;
         StartCoroutine(LerpTimeScale(1f, 0.1f));
 
     }

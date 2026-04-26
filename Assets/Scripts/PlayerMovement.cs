@@ -90,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
         if (isDashing || isSlamming) return;
         HandleCoyoteTime();
         HandleJumpBuffer();
-        if (!isSliding)
+        if (!isSliding && am.doubleJump)
         {
             HandleDoubleJump();
         }
@@ -458,9 +458,11 @@ public class PlayerMovement : MonoBehaviour
         }
         slamtrail.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         isSlamming = false;
+        yield return new WaitForSeconds(0.1f);
+        rb.linearVelocityY = jumpSpeed;
         yield return new WaitForSeconds(slamCooldown);
         canSlam = true;
-        rb.linearVelocityY = jumpSpeed * 1.75f;
+
     }
 
 
