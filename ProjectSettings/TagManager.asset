@@ -41,8 +41,35 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: BgLayer4
+    uniqueID: 1368969005
+    locked: 0
+  - name: BgLayer3
+    uniqueID: 2530605021
+    locked: 0
+  - name: BgLayer2
+    uniqueID: 34828173
+    locked: 0
+  - name: BgLayer1
+    uniqueID: 3315324135
+    locked: 0
+  - name: Props
+    uniqueID: 2226595413
+    locked: 0
+  - name: Tomb
+    uniqueID: 4169803433
+    locked: 0
+  - name: Player
+    uniqueID: 663330291
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Deco
+    uniqueID: 2822944439
+    locked: 0
+  - name: Ground
+    uniqueID: 2201671877
     locked: 0
   m_RenderingLayers:
   - Default
