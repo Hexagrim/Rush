@@ -33,7 +33,14 @@ public class AbilityCollectable : MonoBehaviour
             {
                 am.StartCoroutine(am.GetDoubleJump());
             }
-
+            else if (slam)
+            {
+                am.StartCoroutine(am.GetSlam());
+            }
+            else if (wallSlide)
+            {
+                am.StartCoroutine(am.GetWallSlide());
+            }
             FindFirstObjectByType<CamShake>().ShakeCam(7, 2, 0.1f);
             Instantiate(collectParticle, transform.position, Quaternion.identity);
             Destroy(this.gameObject);

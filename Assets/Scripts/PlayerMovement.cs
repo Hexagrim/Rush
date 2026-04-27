@@ -106,13 +106,19 @@ public class PlayerMovement : MonoBehaviour
             HandleApexSpeedClamp();
         }
         HandleWallCheck();
-        WallSlide();
-        WallJump();
+        if (am.wallSlide)
+        {
+            WallSlide();
+            WallJump();
+        }
         if (am.dash)
         {
             HandleDash();
         }
-        HandleSlam();
+        if (am.slam)
+        {
+            HandleSlam();
+        }
         //HandleGlide();
     }
 

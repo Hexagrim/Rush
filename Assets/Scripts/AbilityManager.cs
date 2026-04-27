@@ -63,6 +63,46 @@ public class AbilityManager : MonoBehaviour
 
     }
 
+    public IEnumerator GetWallSlide()
+    {
+        StartCoroutine(LerpTimeScale(0f, 0.5f));
+        wsIcon.SetActive(true);
+        yield return new WaitForSecondsRealtime(0.7f);
+        abilityGainText.text = "Wall Slide";
+        abilityControlText.text = "";
+        abilityGainScreen.SetBool("show", true);
+        yield return new WaitForSecondsRealtime(0.5f);
+        while (!Input.anyKey)
+        {
+            yield return null;
+        }
+        wsIcon.SetActive(false);
+        abilityGainScreen.SetBool("show", false);
+        wallSlide = true;
+        StartCoroutine(LerpTimeScale(1f, 0.1f));
+
+    }
+    public IEnumerator GetSlam()
+    {
+        StartCoroutine(LerpTimeScale(0f, 0.5f));
+        slamIcon.SetActive(true);
+        yield return new WaitForSecondsRealtime(0.7f);
+        abilityGainText.text = "Down Slam";
+        KeyCode button = GetComponent<PlayerMovement>().Down;
+        abilityControlText.text = button.ToString();
+        abilityGainScreen.SetBool("show", true);
+        yield return new WaitForSecondsRealtime(0.5f);
+        while (!Input.anyKey)
+        {
+            yield return null;
+        }
+        slamIcon.SetActive(false);
+        abilityGainScreen.SetBool("show", false);
+        slam = true;
+        StartCoroutine(LerpTimeScale(1f, 0.1f));
+
+    }
+
     // this lerp time without being affected by time! also why are you reading this??
     public IEnumerator LerpTimeScale(float target, float duration)
     {
