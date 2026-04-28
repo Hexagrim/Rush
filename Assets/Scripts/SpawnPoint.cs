@@ -13,15 +13,15 @@ public class SpawnPoint : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Overlay.SetActive(pd.SpawnPos == transform);
+        //Overlay.SetActive(pd.SpawnPos == transform);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player") && pd.SpawnPos != transform)
         {
             pd.SpawnPos = transform;
-            FindFirstObjectByType<CamShake>().ShakeCam(5, 2, 0.2f);
-            Instantiate(SetSpawnParticle, transform.parent.position, Quaternion.identity);
+            //FindFirstObjectByType<CamShake>().ShakeCam(5, 2, 0.2f);
+            //Instantiate(SetSpawnParticle, transform.parent.position, Quaternion.identity);
         }
 
     }
