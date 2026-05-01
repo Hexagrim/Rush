@@ -330,6 +330,7 @@ public class PlayerMovement : MonoBehaviour
         if (isSliding)
         {
             rb.linearVelocityY = Mathf.Clamp(rb.linearVelocityY, -wallSlidingSpeed, wallSlidingSpeed);
+            dashReset = true;
         }
         Anim.SetBool("isWallSliding", isSliding);
     }
@@ -369,7 +370,7 @@ public class PlayerMovement : MonoBehaviour
         Invoke(nameof(UnlockMove) , 0.08f);
         rb.gravityScale = downGravity;
         //canDoubleJump = true;
-        dashReset = true;
+        //dashReset = true;
 
     }
 
