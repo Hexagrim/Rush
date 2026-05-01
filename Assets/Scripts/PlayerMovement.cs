@@ -73,6 +73,8 @@ public class PlayerMovement : MonoBehaviour
     bool wallJumpMoveLock = false;
 
     AbilityManager am;
+
+    public float fallSpeed;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -119,6 +121,7 @@ public class PlayerMovement : MonoBehaviour
         {
             HandleSlam();
         }
+        ClampBottomVelocity();
         //HandleGlide();
     }
 
@@ -366,7 +369,7 @@ public class PlayerMovement : MonoBehaviour
         Invoke(nameof(UnlockMove) , 0.08f);
         rb.gravityScale = downGravity;
         //canDoubleJump = true;
-        //dashReset = true;
+        dashReset = true;
 
     }
 
@@ -508,5 +511,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 size = new Vector3(groundCheckSize, groundCheckSize, 0f);
 
         Gizmos.DrawWireCube(pos, size);
+    }
+
+    void ClampBottomVelocity()
+    {
+        rb.linearVelocityY = Mathf.Clamp(rb.linearVelocityY, -fallSpeed, float.MaxValue);
     }
 }
