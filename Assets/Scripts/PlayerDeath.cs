@@ -30,7 +30,7 @@ public class PlayerDeath : MonoBehaviour
             StartCoroutine(Die());
         }
     }
-    IEnumerator Die()
+    public IEnumerator Die()
     {
         Anim.ResetControllerState(true);
         RigidbodyConstraints2D rbc = GetComponent<Rigidbody2D>().constraints;
