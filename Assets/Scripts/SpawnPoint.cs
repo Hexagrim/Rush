@@ -20,6 +20,9 @@ public class SpawnPoint : MonoBehaviour
         if(collision.CompareTag("Player") && pd.SpawnPos != transform)
         {
             pd.SpawnPos = transform;
+            PlayerPrefs.SetFloat("SpawnX", transform.position.x);
+            PlayerPrefs.SetFloat("SpawnY", transform.position.y);
+
             //FindFirstObjectByType<CamShake>().ShakeCam(5, 2, 0.2f);
             //Instantiate(SetSpawnParticle, transform.parent.position, Quaternion.identity);
         }

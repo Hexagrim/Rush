@@ -23,6 +23,7 @@ public class AbilityManager : MonoBehaviour
 
     public IEnumerator GetDash()
     {
+        PlayerPrefs.SetString("dash", "true");
         StartCoroutine(LerpTimeScale(0f, 0.5f));
         yield return new WaitForSecondsRealtime(0.7f);
         abilityGainText.text = "Dash";
@@ -44,6 +45,8 @@ public class AbilityManager : MonoBehaviour
 
     public IEnumerator GetDoubleJump()
     {
+
+        PlayerPrefs.SetString("doubleJump", "true");
         StartCoroutine(LerpTimeScale(0f, 0.5f));
         djIcon.SetActive(true);
         yield return new WaitForSecondsRealtime(0.7f);
@@ -65,6 +68,8 @@ public class AbilityManager : MonoBehaviour
 
     public IEnumerator GetWallSlide()
     {
+
+        PlayerPrefs.SetString("wallSlide", "true");
         StartCoroutine(LerpTimeScale(0f, 0.5f));
         wsIcon.SetActive(true);
         yield return new WaitForSecondsRealtime(0.7f);
@@ -84,6 +89,8 @@ public class AbilityManager : MonoBehaviour
     }
     public IEnumerator GetSlam()
     {
+
+        PlayerPrefs.SetString("slam", "true");
         StartCoroutine(LerpTimeScale(0f, 0.5f));
         slamIcon.SetActive(true);
         yield return new WaitForSecondsRealtime(0.7f);
