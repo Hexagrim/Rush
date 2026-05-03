@@ -75,11 +75,15 @@ public class PlayerMovement : MonoBehaviour
     AbilityManager am;
 
     public float fallSpeed;
+
+    AudioManager AudioM;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         Anim = GetComponent<Animator>();
         am = GetComponent<AbilityManager>();
+
+        AudioM = FindFirstObjectByType<AudioManager>();
     }
 
 
@@ -204,6 +208,7 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocityY = jumpSpeed;
             Anim.SetTrigger("takeoff");
+            AudioM.PlaySfx(AudioM.Jump);
             canDoubleJump = true;
             jumpBufferCounter = 0f;
         }
@@ -341,14 +346,14 @@ public class PlayerMovement : MonoBehaviour
         if (!isGrounded && isSliding && Input.GetKeyDown(Up)&& coyoteTimeCounter <= 0f)
         {
             wallJumping = true;
+            AudioM.PlaySfx(AudioM.Jump);
             wallJumpMoveLock = true;
             Invoke(nameof(StopWallJump), 0.1f);
         }
-        if (isGrounded && Mathf.Abs(rb.linearVelocityY) <=0.1f)
+        if (isGrounded && Mathf.Abs(rb.linearVelocityY) <= 0.1f)
         {
             canDoubleJump = false;
         }
-
         if (wallJumping && !glideTrail.isPlaying)
         {
             glideTrail.Play();
@@ -398,6 +403,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         dashReset = false;
         canDash = false;
+        AudioM.PlaySfx(AudioM.Dash);
         float normGravity = rb.gravityScale;
         rb.gravityScale = 0f;
         rb.linearVelocityX = dashSpeed * Mathf.Sign(transform.localScale.x) * (isSliding ? -1 : 1); // TERNARY OPERATOR AHHH
@@ -463,6 +469,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if (isGrounded)
         {
+            AudioM.PlaySfx(AudioM.slam);
             FindFirstObjectByType<CamShake>().ShakeCam(10, 5, 0.15f);
             Instantiate(slamParticle, transform.position, Quaternion.identity);
         }

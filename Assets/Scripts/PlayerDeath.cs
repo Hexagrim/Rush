@@ -9,12 +9,13 @@ public class PlayerDeath : MonoBehaviour
     private PlayerMovement mov;
 
     public Transform SpawnPos;
-
+    AudioManager AudioM;
     public GameObject DieParticle;
     void Start()
     {
         Anim= GetComponent<Animator>();
         mov = GetComponent<PlayerMovement>();
+        AudioM = FindFirstObjectByType<AudioManager>();
     }
 
     // Update is called once per frame
@@ -37,6 +38,7 @@ public class PlayerDeath : MonoBehaviour
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll;
         mov.dashtrail.Stop();
         mov.slamtrail.Stop();
+        AudioM.PlaySfx(AudioM.Die);
         mov.cancleAbility = true;
         isDead = true;
         Anim.SetTrigger("die");
