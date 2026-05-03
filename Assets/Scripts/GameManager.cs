@@ -15,8 +15,8 @@ public class GameManager : MonoBehaviour
     {
         Player.transform.position = new Vector2
             (
-                PlayerPrefs.GetFloat("SpawnX",-44)
-                ,PlayerPrefs.GetFloat("SpawnY",-23)
+                PlayerPrefs.GetFloat("SpawnX",-35)
+                ,PlayerPrefs.GetFloat("SpawnY",-18.5f)
             );
         if(PlayerPrefs.GetString("dash","false") != "false")
         {
